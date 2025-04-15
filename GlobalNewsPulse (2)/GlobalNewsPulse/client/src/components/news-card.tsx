@@ -38,7 +38,7 @@ interface NewsCardProps {
 
 export function NewsCard({ article }: NewsCardProps) {
   return (
-    <Card className="overflow-hidden card-hover card-glass">
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-card">
       <CardHeader className="space-y-2 bg-background/50 backdrop-blur-sm">
         <CardTitle className="line-clamp-2 text-lg font-semibold">
           {decodeHtmlEntities(article.title)}
