@@ -904,7 +904,7 @@ export default function HomePage() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 max-w-[2400px]">
+      <main className="container mx-auto px-4 py-8">
         {/* We've removed the loading indicator to prevent showing fetch operations to users */}
 
         {/* Display filter indicator when a filter is active */}
