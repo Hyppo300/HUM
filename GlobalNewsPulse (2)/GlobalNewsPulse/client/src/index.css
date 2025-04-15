@@ -11,3 +11,13 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+@layer components {
+  .masonry-grid {
+    @apply columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4;
+  }
+
+  .masonry-item {
+    @apply break-inside-avoid mb-4 transform transition-transform duration-300 hover:scale-[1.02];
+  }
+}
