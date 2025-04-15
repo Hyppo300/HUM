@@ -866,45 +866,45 @@ export default function HomePage() {
               <UserMenuSection />
             </div>
           </div>
-
-          {/* Search Bar */}
-          <div className="flex gap-4 w-full">
-            <form onSubmit={handleSearch} className="flex gap-2 w-full">
-              <Input
-                type="text"
-                placeholder="Search for news topics..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1"
-              />
-              <Button
-                type="submit"
-                disabled={fetchNewsMutation.isPending || !searchQuery.trim()}
-                className="flex items-center gap-2"
-              >
-                {isSearching ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Search className="h-4 w-4" />
-                )}
-                Search
-              </Button>
-            </form>
-            <div className="flex gap-2">
-              <Button
-                variant="default"
-                onClick={handleFetchTrendingNews}
-                disabled={fetchNewsMutation.isPending}
-                className="whitespace-nowrap"
-              >
-                🔥 Hot Topics
-              </Button>
-            </div>
-          </div>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-8">
+        {/* Search Bar */}
+        <div className="flex gap-4 w-full">
+          <form onSubmit={handleSearch} className="flex gap-2 w-full">
+            <Input
+              type="text"
+              placeholder="Search for news topics..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1"
+            />
+            <Button
+              type="submit"
+              disabled={fetchNewsMutation.isPending || !searchQuery.trim()}
+              className="flex items-center gap-2"
+            >
+              {isSearching ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Search className="h-4 w-4" />
+              )}
+              Search
+            </Button>
+          </form>
+          <div className="flex gap-2">
+            <Button
+              variant="default"
+              onClick={handleFetchTrendingNews}
+              disabled={fetchNewsMutation.isPending}
+              className="whitespace-nowrap"
+            >
+              🔥 Hot Topics
+            </Button>
+          </div>
+        </div>
+
         {/* We've removed the loading indicator to prevent showing fetch operations to users */}
 
         {/* Display filter indicator when a filter is active */}
