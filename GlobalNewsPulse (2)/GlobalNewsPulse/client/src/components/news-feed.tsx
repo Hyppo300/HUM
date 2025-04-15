@@ -69,7 +69,7 @@ export function NewsFeed({ articles, isLoading, className, pagination, onPageCha
   return (
     <div className="flex flex-col h-full">
       <ScrollArea className={cn("flex-grow pr-4", className)}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {displayArticles.map((article) => (
             <NewsCard key={article.id} article={article} />
           ))}
