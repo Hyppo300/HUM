@@ -38,38 +38,40 @@ interface NewsCardProps {
 
 export function NewsCard({ article }: NewsCardProps) {
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-card">
-      <CardHeader className="space-y-2 bg-background/50 backdrop-blur-sm">
-        <CardTitle className="line-clamp-2 text-lg font-semibold">
-          {decodeHtmlEntities(article.title)}
-        </CardTitle>
-        <div className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap">
+    <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 bg-white border-0">
+      <div className="aspect-[16/9] overflow-hidden bg-muted">
+        <img 
+          src={article.imageUrl || 'https://placehold.co/800x450/e5e7eb/a1a1aa?text=News'} 
+          alt={article.title}
+          className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+        />
+      </div>
+      <CardHeader className="space-y-2 pt-6">
+        <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
           <span>{format(new Date(article.createdAt), "MMM d, yyyy")}</span>
-          <span className="text-muted-foreground/30">•</span>
-          <span className="uppercase text-xs font-medium">
+          <span className="uppercase font-medium">
             {article.country?.endsWith("-TRENDING") ? article.country.replace("-TRENDING", "") : article.country}
           </span>
-          
           {(article.country === "GLOBAL-TRENDING" || article.country?.endsWith("-TRENDING")) && (
-            <>
-              <span className="text-muted-foreground/30">•</span>
-              <span className="text-xs bg-red-500/10 text-red-600 px-1.5 py-0.5 rounded-sm font-medium flex items-center">
-                🔥 Trending
-              </span>
-            </>
+            <span className="bg-red-500/10 text-red-600 px-2 py-0.5 rounded font-medium">
+              🔥 Trending
+            </span>
           )}
         </div>
+        <CardTitle className="line-clamp-2 text-xl font-semibold group-hover:text-primary transition-colors">
+          {decodeHtmlEntities(article.title)}
+        </CardTitle>
       </CardHeader>
-      <CardContent className="pt-4">
-        <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
+      <CardContent>
+        <p className="text-sm text-muted-foreground/90 line-clamp-3 mb-6">
           {decodeHtmlEntities(article.summary)}
         </p>
         <Link 
           href={`/article/${article.id}`}
-          className="inline-flex items-center text-sm text-primary hover:text-primary/80 transition-colors"
+          className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors"
         >
-          Read full article
-          <ExternalLink className="ml-1 h-3 w-4" />
+          Read More
+          <ExternalLink className="ml-2 h-4 w-4" />
         </Link>
       </CardContent>
     </Card>
