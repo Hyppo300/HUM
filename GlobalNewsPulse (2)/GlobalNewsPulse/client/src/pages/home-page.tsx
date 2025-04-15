@@ -869,6 +869,25 @@ export default function HomePage() {
         </div>
       </header>
 
+      <nav className="border-b bg-background sticky top-16 z-10">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center overflow-x-auto no-scrollbar py-2 gap-6">
+            <a href="#world" className="text-sm font-medium hover:text-primary whitespace-nowrap">World</a>
+            <a href="#politics" className="text-sm font-medium hover:text-primary whitespace-nowrap">Politics</a>
+            <a href="#business" className="text-sm font-medium hover:text-primary whitespace-nowrap">Business</a>
+            <a href="#health" className="text-sm font-medium hover:text-primary whitespace-nowrap">Health</a>
+            <a href="#entertainment" className="text-sm font-medium hover:text-primary whitespace-nowrap">Entertainment</a>
+            <a href="#tech" className="text-sm font-medium hover:text-primary whitespace-nowrap">Tech</a>
+            <a href="#style" className="text-sm font-medium hover:text-primary whitespace-nowrap">Style</a>
+            <a href="#travel" className="text-sm font-medium hover:text-primary whitespace-nowrap">Travel</a>
+            <a href="#sports" className="text-sm font-medium hover:text-primary whitespace-nowrap">Sports</a>
+            <a href="#science" className="text-sm font-medium hover:text-primary whitespace-nowrap">Science</a>
+            <a href="#climate" className="text-sm font-medium hover:text-primary whitespace-nowrap">Climate</a>
+            <a href="#weather" className="text-sm font-medium hover:text-primary whitespace-nowrap">Weather</a>
+          </div>
+        </div>
+      </nav>
+
       <main className="container mx-auto px-4 py-8">
         {/* Search Bar */}
         <div className="flex gap-4 w-full">
