@@ -7,7 +7,7 @@ import { Link } from "wouter";
 // Function to decode HTML entities
 function decodeHtmlEntities(text: string): string {
   if (!text) return '';
-  
+
   const entities: Record<string, string> = {
     '&quot;': '"',
     '&apos;': "'",
@@ -17,18 +17,18 @@ function decodeHtmlEntities(text: string): string {
     '&amp;': '&',
     '&nbsp;': ' '
   };
-  
+
   // Replace all known entities
   let decodedText = text;
   for (const [entity, replacement] of Object.entries(entities)) {
     decodedText = decodedText.replace(new RegExp(entity, 'g'), replacement);
   }
-  
+
   // Handle numeric entities like &#123;
   decodedText = decodedText.replace(/&#(\d+);/g, (_, dec) => {
     return String.fromCharCode(parseInt(dec, 10));
   });
-  
+
   return decodedText;
 }
 
@@ -38,8 +38,8 @@ interface NewsCardProps {
 
 export function NewsCard({ article }: NewsCardProps) {
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-card">
-      <CardHeader className="space-y-2 bg-background/50 backdrop-blur-sm">
+    <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 bg-primary/10 border-primary/20 hover:bg-primary/15">
+      <CardHeader className="space-y-2 pt-6 bg-secondary/10">
         <CardTitle className="line-clamp-2 text-lg font-semibold">
           {decodeHtmlEntities(article.title)}
         </CardTitle>
@@ -49,7 +49,7 @@ export function NewsCard({ article }: NewsCardProps) {
           <span className="uppercase text-xs font-medium">
             {article.country?.endsWith("-TRENDING") ? article.country.replace("-TRENDING", "") : article.country}
           </span>
-          
+
           {(article.country === "GLOBAL-TRENDING" || article.country?.endsWith("-TRENDING")) && (
             <>
               <span className="text-muted-foreground/30">•</span>
