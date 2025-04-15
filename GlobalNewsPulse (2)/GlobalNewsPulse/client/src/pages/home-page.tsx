@@ -827,10 +827,10 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
+      <header className="border-b bg-black sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold bg-primary bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold text-white">
               Global News Hub
             </h1>
             <div className="flex items-center gap-4">
