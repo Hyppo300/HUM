@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,6 +9,22 @@
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-sans antialiased bg-[#060B20] text-white;
   }
+}
+
+.news-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.card-hover {
+  @apply transition-all duration-300 hover:transform hover:-translate-y-2;
+}
+
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#6366f1] to-[#8b5cf6];
+}
+
+.card-glass {
+  @apply bg-white/5 backdrop-blur-lg border border-white/10;
 }

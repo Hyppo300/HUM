@@ -904,8 +904,8 @@ export default function HomePage() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        {/* We've removed the loading indicator to prevent showing fetch operations to users */}
+      <main className="container mx-auto px-4 py-12 min-h-screen bg-[#060B20]">
+        <h1 className="text-4xl font-bold mb-8 gradient-text text-center">Global News Pulse</h1>
 
         {/* Display filter indicator when a filter is active */}
         {activeFilter !== "all" && (
@@ -952,9 +952,7 @@ export default function HomePage() {
               ? [...(articles || []), ...newsApiArticles, ...newsroomArticles]
               : filteredArticles
           }
-          isLoading={
-            false
-          } /* Never show loading state for immediate feedback */
+          isLoading={false} /* Never show loading state for immediate feedback */
           className="pt-4"
           pagination={pagination}
           onPageChange={handlePageChange}

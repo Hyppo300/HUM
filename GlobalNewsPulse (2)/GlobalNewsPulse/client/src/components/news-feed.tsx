@@ -26,7 +26,7 @@ interface NewsFeedProps {
 function useSmoothArticles(incomingArticles?: Article[], loading?: boolean) {
   const [displayedArticles, setDisplayedArticles] = useState<Article[]>([]);
   const [hasShownArticles, setHasShownArticles] = useState(false);
-  
+
   useEffect(() => {
     // Only update displayed articles if we have new ones and they're different from current
     if (incomingArticles?.length && 
@@ -35,7 +35,7 @@ function useSmoothArticles(incomingArticles?: Article[], loading?: boolean) {
       setHasShownArticles(true);
     }
   }, [incomingArticles, displayedArticles]);
-  
+
   // Always return something to display - either current articles or previous ones
   return hasShownArticles ? displayedArticles : [];
 }
@@ -43,20 +43,20 @@ function useSmoothArticles(incomingArticles?: Article[], loading?: boolean) {
 export function NewsFeed({ articles, isLoading, className, pagination, onPageChange }: NewsFeedProps) {
   // Use smooth articles to prevent content flashing during reloads
   const displayArticles = useSmoothArticles(articles, isLoading);
-  
+
   // Only show the "no articles" message if:
   // 1. We're not loading anything
   // 2. We haven't received articles yet 
   // 3. We explicitly have an empty array (not undefined)
   const showEmptyState = !isLoading && articles !== undefined && articles.length === 0;
-  
+
   // Handle pagination controls
   const handlePageChange = (newPage: number) => {
     if (onPageChange && pagination && newPage >= 1 && newPage <= pagination.totalPages) {
       onPageChange(newPage);
     }
   };
-  
+
   if (showEmptyState) {
     return (
       <div className="text-center py-12 text-muted-foreground">
@@ -69,13 +69,13 @@ export function NewsFeed({ articles, isLoading, className, pagination, onPageCha
   return (
     <div className="flex flex-col h-full">
       <ScrollArea className={cn("flex-grow pr-4", className)}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="news-grid">
           {displayArticles.map((article) => (
             <NewsCard key={article.id} article={article} />
           ))}
         </div>
       </ScrollArea>
-      
+
       {/* Pagination controls */}
       {pagination && pagination.totalPages > 1 && (
         <div className="flex flex-col md:flex-row justify-between items-center mt-6 py-4 border-t gap-4">
@@ -83,7 +83,7 @@ export function NewsFeed({ articles, isLoading, className, pagination, onPageCha
             Showing page {pagination.page} of {pagination.totalPages}
             <span className="ml-2">({pagination.totalCount} articles total)</span>
           </div>
-          
+
           <div className="flex items-center gap-2">
             {/* Page navigation */}
             <Button 
@@ -94,7 +94,7 @@ export function NewsFeed({ articles, isLoading, className, pagination, onPageCha
             >
               First
             </Button>
-            
+
             <Button 
               variant="outline" 
               size="sm"
@@ -103,7 +103,7 @@ export function NewsFeed({ articles, isLoading, className, pagination, onPageCha
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            
+
             {/* Page number buttons */}
             <div className="flex gap-1">
               {/* Calculate range of page numbers to show */}
@@ -122,7 +122,7 @@ export function NewsFeed({ articles, isLoading, className, pagination, onPageCha
                   // Otherwise show current page and 2 on either side
                   pageNum = pagination.page - 2 + i;
                 }
-                
+
                 return (
                   <Button
                     key={pageNum}
@@ -137,7 +137,7 @@ export function NewsFeed({ articles, isLoading, className, pagination, onPageCha
                 );
               })}
             </div>
-            
+
             <Button 
               variant="outline" 
               size="sm"
@@ -146,7 +146,7 @@ export function NewsFeed({ articles, isLoading, className, pagination, onPageCha
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
-            
+
             <Button 
               variant="outline" 
               size="sm"
