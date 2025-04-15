@@ -871,7 +871,7 @@ export default function HomePage() {
 
       <nav className="border-b bg-background sticky top-16 z-10">
         <div className="container mx-auto px-4">
-          <div className="flex items-center overflow-x-auto no-scrollbar py-2 gap-6">
+          <div className="flex items-center justify-center overflow-x-auto no-scrollbar py-2 gap-6">
             <a href="#world" className="text-sm font-medium hover:text-primary whitespace-nowrap">World</a>
             <a href="#politics" className="text-sm font-medium hover:text-primary whitespace-nowrap">Politics</a>
             <a href="#business" className="text-sm font-medium hover:text-primary whitespace-nowrap">Business</a>

@@ -29,6 +29,16 @@
   }
 
   .dark {
+
+/* Center navigation */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  margin: 0 auto;
+  max-width: fit-content;
+  padding: 0 1rem;
+}
+
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
