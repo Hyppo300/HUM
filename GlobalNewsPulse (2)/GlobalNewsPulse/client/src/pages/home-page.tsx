@@ -9,14 +9,37 @@ import { Loader2, Search, Globe, Flame, MapPin, X } from "lucide-react";
 import { useState, FormEvent, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
+import { Link } from "wouter";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { X as FeatherX, Menu } from "react-feather";
 
 export default function HomePage() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
   const [selectedCountry, setSelectedCountry] = useState<string>();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { toast } = useToast();
-
+  const presets = [
+    "Yesterday",
+    "Last 7 Days",
+    "Last 30 Days",
+    "This Month",
+    "Last Month",
+    "Custom",
+  ];
+  const [selectedPreset, setSelectedPreset] = useState("");
+  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
+    null,
+    null,
+  ]);
+  const [startDate, endDate] = dateRange;
   // Manually fetch articles on initial load - no automatic fetching
   const [articles, setArticles] = useState<Article[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -91,6 +114,38 @@ export default function HomePage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const getDateRangeFromPreset = (
+    preset: string,
+  ): { from?: string; to?: string } => {
+    const now = new Date();
+    const to = now.toISOString();
+
+    let fromDate: Date;
+
+    switch (preset) {
+      case "Today":
+        fromDate = new Date(now);
+        fromDate.setHours(0, 0, 0, 0);
+        break;
+      case "This Week":
+        fromDate = new Date(now);
+        fromDate.setDate(now.getDate() - 7);
+        break;
+      case "Past Month":
+        fromDate = new Date(now);
+        fromDate.setMonth(now.getMonth() - 1);
+        break;
+      case "Custom":
+        return {}; // custom is handled elsewhere
+      default:
+        return {};
+    }
+
+    return {
+      from: fromDate.toISOString(),
+      to,
+    };
+  };
   // Effect to handle country filter changes - runs when country is changed
   useEffect(() => {
     console.log(`Country filter changed to: ${selectedCountry || "cleared"}`);
@@ -243,10 +298,14 @@ export default function HomePage() {
       country,
       query,
       trending,
+      from,
+      to,
     }: {
       country?: string;
       query?: string;
       trending?: boolean;
+      from?: string;
+      to?: string;
     }) => {
       // Fetch from our Express proxy endpoint to avoid CORS issues
       try {
@@ -258,6 +317,9 @@ export default function HomePage() {
         if (query) url += `&query=${encodeURIComponent(query)}`;
         // TypeScript fix: Need to check if trending exists and is true
         if (trending === true) url += `&trending=true`;
+
+        if (from) url += `&from=${encodeURIComponent(from)}`;
+        if (to) url += `&to=${encodeURIComponent(to)}`;
 
         console.log(`Fetching news from proxy: ${url}`);
 
@@ -406,41 +468,41 @@ export default function HomePage() {
   });
 
   // Handle fetching news by country
-  const handleFetchNews = () => {
-    // Don't perform the fetch if it's already in progress
-    if (fetchNewsMutation.isPending) return;
+  // const handleFetchNews = () => {
+  //   // Don't perform the fetch if it's already in progress
+  //   if (fetchNewsMutation.isPending) return;
 
-    if (selectedCountry) {
-      // If a country is selected, fetch news for that country
-      fetchNewsMutation.mutate({
-        country: selectedCountry,
-        query: undefined,
-      });
+  //   if (selectedCountry) {
+  //     // If a country is selected, fetch news for that country
+  //     fetchNewsMutation.mutate({
+  //       country: selectedCountry,
+  //       query: undefined,
+  //     });
 
-      toast({
-        title: `Fetching ${selectedCountry.toUpperCase()} News`,
-        description: "Getting the latest articles from this country...",
-      });
+  //     toast({
+  //       title: `Fetching ${selectedCountry.toUpperCase()} News`,
+  //       description: "Getting the latest articles from this country...",
+  //     });
 
-      // Make sure we're in country filter mode
-      setActiveFilter("country");
-    } else {
-      // If no country is selected, fetch trending global news
-      // as this is more useful than fetching with no parameters
-      fetchNewsMutation.mutate({
-        trending: true,
-        query: "breaking news",
-      });
+  //     // Make sure we're in country filter mode
+  //     setActiveFilter("country");
+  //   } else {
+  //     // If no country is selected, fetch trending global news
+  //     // as this is more useful than fetching with no parameters
+  //     fetchNewsMutation.mutate({
+  //       trending: true,
+  //       query: "breaking news",
+  //     });
 
-      toast({
-        title: "Fetching Global News",
-        description: "Getting the latest headlines from around the world...",
-      });
+  //     toast({
+  //       title: "Fetching Global News",
+  //       description: "Getting the latest headlines from around the world...",
+  //     });
 
-      // Set to hot topics mode
-      setActiveFilter("hot");
-    }
-  };
+  //     // Set to hot topics mode
+  //     setActiveFilter("hot");
+  //   }
+  // };
 
   // Enable background fetching on initial load with cycling through all 55 countries
   useEffect(() => {
@@ -818,91 +880,255 @@ export default function HomePage() {
   });
 
   // Handle fetching from Newsroom API
-  const handleFetchNewsroom = () => {
-    if (fetchNewsroomMutation.isPending) return;
+  const handleFetchNews = () => {
+    if (fetchNewsMutation.isPending) return;
 
-    setNewsroomArticles([]); // Clear previous articles
-    fetchNewsroomMutation.mutate();
+    let fromDate: string | undefined;
+    let toDate: string | undefined;
+
+    if (selectedPreset === "Custom" && startDate && endDate) {
+      fromDate = startDate.toISOString();
+      toDate = endDate.toISOString();
+    } else if (selectedPreset) {
+      const range = getDateRangeFromPreset(selectedPreset);
+      fromDate = range.from;
+      toDate = range.to;
+    }
+
+    if (selectedCountry) {
+      fetchNewsMutation.mutate({
+        country: selectedCountry,
+        from: fromDate,
+        to: toDate,
+      });
+
+      toast({
+        title: `Fetching ${selectedCountry.toUpperCase()} News`,
+        description: `Getting the latest articles from ${selectedCountry.toUpperCase()}...`,
+      });
+
+      setActiveFilter("country");
+    } else {
+      fetchNewsMutation.mutate({
+        trending: true,
+        query: "breaking news",
+        from: fromDate,
+        to: toDate,
+      });
+
+      toast({
+        title: "Fetching Global News",
+        description: "Getting the latest headlines from around the world...",
+      });
+
+      setActiveFilter("hot");
+    }
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-black sticky top-0 z-10">
+    <div className="bg-[url(https://static.vecteezy.com/system/resources/thumbnails/035/328/612/small/red-silk-fabric-texture-used-as-background-red-panne-fabric-background-of-soft-and-smooth-textile-material-crushed-velvet-luxury-scarlet-for-velvet-photo.jpg)] h-full w-full bg-cover bg-center bg-no-repeat">
+      <header className="bg-[url('https://i.pinimg.com/736x/60/28/bb/6028bbed600e4948ad054c391eac6cf6.jpg')] bg-cover bg-center bg-no-repeat bg-black border-b sticky top-0 z-20">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold text-white">
+            {/* Site Title */}
+            <div className="lg:hidden absolute left-4">
+              <button onClick={toggleMenu}>
+                {menuOpen ? (
+                  <X className="text-white h-6 w-6" />
+                ) : (
+                  <Menu className="text-white h-6 w-6" />
+                )}
+              </button>
+            </div>
+
+            {/* "Global News Hub" - Always in the center on all screens */}
+            <Link
+              href={`/`}
+              className=" global-news-hub-text inline-flex items-center font-bold text-white text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-3xl"
+            >
               Global News Hub
-            </h1>
+            </Link>
+
+            {/* Country Filter + Login Section */}
             <div className="flex items-center gap-4">
               <CountryFilter
                 value={selectedCountry}
                 onChange={(country) => {
                   setSelectedCountry(country);
                   if (country) {
-                    // Set filter to country mode
                     setActiveFilter("country");
                     toast({
                       title: `Showing ${country.toUpperCase()} News`,
                       description: `Displaying articles from ${country.toUpperCase()}...`,
                     });
-
-                    // Automatically fetch news for this country in the background
                     if (!fetchNewsMutation.isPending) {
-                      console.log(
-                        `Auto-fetching news for ${country.toUpperCase()}`,
-                      );
-                      // Fetch news without showing loading state
                       fetchNewsMutation.mutate({
                         country: country,
                         query: undefined,
                       });
                     }
                   } else {
-                    // Reset to show all
                     setActiveFilter("all");
                   }
                 }}
               />
-              <UserMenuSection />
+
+              {/* Hide login text on small screens */}
+              <div className="hidden sm:block">
+                <UserMenuSection />
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      <nav className="border-b bg-background sticky top-16 z-10">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center overflow-x-auto no-scrollbar py-2 gap-6">
-            <a href="#world" className="text-sm font-medium hover:text-primary whitespace-nowrap">World</a>
-            <a href="#politics" className="text-sm font-medium hover:text-primary whitespace-nowrap">Politics</a>
-            <a href="#business" className="text-sm font-medium hover:text-primary whitespace-nowrap">Business</a>
-            <a href="#health" className="text-sm font-medium hover:text-primary whitespace-nowrap">Health</a>
-            <a href="#entertainment" className="text-sm font-medium hover:text-primary whitespace-nowrap">Entertainment</a>
-            <a href="#tech" className="text-sm font-medium hover:text-primary whitespace-nowrap">Tech</a>
-            <a href="#style" className="text-sm font-medium hover:text-primary whitespace-nowrap">Style</a>
-            <a href="#travel" className="text-sm font-medium hover:text-primary whitespace-nowrap">Travel</a>
-            <a href="#sports" className="text-sm font-medium hover:text-primary whitespace-nowrap">Sports</a>
-            <a href="#science" className="text-sm font-medium hover:text-primary whitespace-nowrap">Science</a>
-            <a href="#climate" className="text-sm font-medium hover:text-primary whitespace-nowrap">Climate</a>
-            <a href="#weather" className="text-sm font-medium hover:text-primary whitespace-nowrap">Weather</a>
+      {/* NAVIGATION */}
+      <nav
+        className={`lg:hidden fixed top-16 left-0 w-64 h-full bg-[#B3B3B4] p-4 transition-all ease-in-out duration-300 transform ${
+          menuOpen ? "translate-x-0" : "-translate-x-full"
+        } z-20`}
+      >
+        {/* Close Button for Mobile Menu */}
+        <div className="flex justify-end">
+          {/* <button onClick={toggleMenu}>
+            <X className="text-white h-6 w-6" />
+          </button> */}
+        </div>
+
+        {/* Menu Items */}
+        <div className="flex flex-col gap-4 mt-8">
+          <a
+            href="#general"
+            className="text-white text-lg font-bold hover:text-red-700"
+          >
+            General
+          </a>
+          <a
+            href="#politics"
+            className="text-white text-lg font-bold hover:text-red-700"
+          >
+            Politics
+          </a>
+          <a
+            href="#business"
+            className="text-white text-lg font-bold hover:text-red-700"
+          >
+            Business
+          </a>
+          <a
+            href="#health"
+            className="text-white text-lg font-bold hover:text-red-700"
+          >
+            Health
+          </a>
+          <a
+            href="#entertainment"
+            className="text-white text-lg font-bold hover:text-red-700"
+          >
+            Entertainment
+          </a>
+          <a
+            href="#tech"
+            className="text-white text-lg font-bold hover:text-red-700"
+          >
+            Tech
+          </a>
+          <a
+            href="#sports"
+            className="text-white text-lg font-bold hover:text-red-700"
+          >
+            Sports
+          </a>
+          <a
+            href="#science"
+            className="text-white text-lg font-bold hover:text-red-700"
+          >
+            Science
+          </a>
+          <div className="sm:block">
+            <UserMenuSection />
           </div>
         </div>
       </nav>
 
-      <main className="container mx-auto px-4 py-8">
-        {/* Search Bar */}
-        <div className="flex gap-4 w-full">
-          <form onSubmit={handleSearch} className="flex gap-2 w-full">
+      {/* Desktop Navigation */}
+      <nav className="sticky top-20 z-10 bg-[#B3B3B4] border-b hidden lg:block">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center overflow-x-auto no-scrollbar py-2 gap-6 font-opensans">
+            <a
+              href="#general"
+              className="text-sm font-bold hover:text-white whitespace-nowrap"
+            >
+              General
+            </a>
+            <a
+              href="#politics"
+              className="text-sm font-bold hover:text-white whitespace-nowrap"
+            >
+              Politics
+            </a>
+            <a
+              href="#business"
+              className="text-sm font-bold hover:text-white whitespace-nowrap"
+            >
+              Business
+            </a>
+            <a
+              href="#health"
+              className="text-sm font-bold hover:text-white whitespace-nowrap"
+            >
+              Health
+            </a>
+            <a
+              href="#entertainment"
+              className="text-sm font-bold hover:text-white whitespace-nowrap"
+            >
+              Entertainment
+            </a>
+            <a
+              href="#tech"
+              className="text-sm font-bold hover:text-white whitespace-nowrap"
+            >
+              Tech
+            </a>
+            <a
+              href="#sports"
+              className="text-sm font-bold hover:text-white whitespace-nowrap"
+            >
+              Sports
+            </a>
+            <a
+              href="#science"
+              className="text-sm font-bold hover:text-white whitespace-nowrap"
+            >
+              Science
+            </a>
+          </div>
+        </div>
+      </nav>
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-8 bg-cover bg-center bg-no-repeat backdrop-blur-lg">
+        {/* Search & Filters Section */}
+        {/* Filter Row Centered */}
+        {/* Search Bar Row */}
+
+        <div className="flex flex-col sm:flex-row flex-wrap gap-4 w-full mt-4 justify-center">
+          {/* Search Bar + Search Button (Always in One Line) */}
+          <form
+            onSubmit={handleSearch}
+            className="flex flex-row gap-2 flex-1 min-w-0"
+          >
             <Input
               type="text"
               placeholder="Search for news topics..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1"
+              className="flex-1 min-w-0"
             />
             <Button
               type="submit"
               disabled={fetchNewsMutation.isPending || !searchQuery.trim()}
-              className="flex items-center gap-2"
+              className="text-sm px-4 py-2 bg-gray-200 text-red-800 hover:bg-gray-300 shrink-0"
             >
               {isSearching ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -912,23 +1138,56 @@ export default function HomePage() {
               Search
             </Button>
           </form>
-          <div className="flex gap-2">
+
+          {/* Hot Topics Button + Date Filter (Stacked on Mobile) */}
+          <div className="flex flex-row gap-4 w-full sm:w-auto justify-center items-center">
+            {/* Hot Topics */}
             <Button
               variant="default"
               onClick={handleFetchTrendingNews}
               disabled={fetchNewsMutation.isPending}
-              className="whitespace-nowrap"
+              className="text-sm px-4 py-2 bg-gray-200 text-red-800 hover:bg-gray-300 whitespace-nowrap"
             >
               🔥 Hot Topics
             </Button>
+
+            {/* Date Filter Dropdown */}
+            <div className="w-full sm:w-auto max-w-xs">
+              <select
+                className="w-full px-4 py-2 border rounded bg-[#dcdce7] text-red-800 shadow-sm border-input text-sm"
+                value={selectedPreset}
+                onChange={(e) => setSelectedPreset(e.target.value)}
+              >
+                <option value="" disabled>
+                  Select Date
+                </option>
+                {presets.map((preset) => (
+                  <option key={preset} value={preset}>
+                    {preset}
+                  </option>
+                ))}
+              </select>
+
+              {selectedPreset === "Custom" && (
+                <div className="mt-2">
+                  <DatePicker
+                    selectsRange={true}
+                    startDate={startDate}
+                    endDate={endDate}
+                    onChange={(update) => setDateRange(update)}
+                    withPortal
+                    className="w-full px-4 py-2 border rounded text-sm"
+                    placeholderText="Select custom date range"
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* We've removed the loading indicator to prevent showing fetch operations to users */}
-
-        {/* Display filter indicator when a filter is active */}
+        {/* Active Filter Display */}
         {activeFilter !== "all" && (
-          <div className="border rounded-md bg-muted/20 p-2 mb-4 flex items-center justify-between">
+          <div className="border rounded-md bg-muted/20 p-2 mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-4">
             <div className="flex items-center gap-2">
               {activeFilter === "hot" && (
                 <Flame className="h-4 w-4 text-red-500" />
@@ -942,21 +1201,25 @@ export default function HomePage() {
               {activeFilter === "country" && (
                 <MapPin className="h-4 w-4 text-green-500" />
               )}
-
               <span className="text-sm text-muted-foreground">
                 {activeFilter === "hot" &&
-                  "Showing global hot topics and trending news from around the world"}
-                {activeFilter === "global" && "Showing global news articles"}
+                  `Showing global hot topics ${selectedPreset ? `(${selectedPreset})` : ""}`}
+                {activeFilter === "global" &&
+                  `Showing global news ${selectedPreset ? `(${selectedPreset})` : ""}`}
                 {activeFilter === "search" &&
-                  `Search results for: "${searchQuery}"`}
+                  `Search results for: "${searchQuery}" ${selectedPreset ? `(${selectedPreset})` : ""}`}
                 {activeFilter === "country" &&
-                  `Showing news from ${selectedCountry?.toUpperCase()}`}
+                  `Showing news from ${selectedCountry?.toUpperCase()} ${selectedPreset ? `(${selectedPreset})` : ""}`}
               </span>
             </div>
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setActiveFilter("all")}
+              onClick={() => {
+                setActiveFilter("all");
+                setSelectedPreset("");
+                setDateRange([null, null]);
+              }}
               className="text-xs"
             >
               <X className="h-3 w-3 mr-1" /> Clear Filter
@@ -964,35 +1227,33 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Combined unified news feed with all sources */}
+        {/* News Feed */}
         <NewsFeed
           articles={
             activeFilter === "all"
               ? [...(articles || []), ...newsApiArticles, ...newsroomArticles]
               : filteredArticles
           }
-          isLoading={
-            false
-          } /* Never show loading state for immediate feedback */
+          isLoading={false}
           className="pt-4"
           pagination={pagination}
           onPageChange={handlePageChange}
         />
 
-        {/* Only show this message if we truly have no articles after loading completes */}
+        {/* Empty State */}
         {((activeFilter === "all" &&
           articles?.length === 0 &&
           newsApiArticles.length === 0 &&
           newsroomArticles.length === 0 &&
           !isLoading) ||
           (activeFilter !== "all" && filteredArticles.length === 0)) && (
-          <div className="text-center py-12 border rounded-lg bg-muted/30">
+          <div className="text-center py-12 border rounded-lg bg-muted/30 mt-4">
             <p className="text-muted-foreground mb-4">
               {activeFilter === "all"
                 ? "No articles found. Try selecting a different country or searching for a topic."
                 : "No articles found matching your current filter. Try another filter or search term."}
             </p>
-            <div className="flex gap-2 justify-center">
+            <div className="flex flex-col sm:flex-row gap-2 justify-center">
               <Button onClick={() => setActiveFilter("all")}>
                 Clear Filter
               </Button>

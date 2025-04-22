@@ -1,17 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
 
 @layer base {
   :root {
-    --primary: 228 47% 52%;    /* #3A59D1 */
-    --secondary: 203 66% 54%;   /* #3D90D7 */
-    --accent: 187 50% 65%;      /* #7AC6D2 */
-    --success: 157 94% 85%;     /* #B5FCCD */
-    --card: 142 12% 43%;       /* #697565 */
-    --header: 203 66% 54%;     /* #3D90D7 */
+    --primary: 228 47% 52%;
+    /* #3A59D1 */
+    --secondary: 203 66% 54%;
+    /* #3D90D7 */
+    /* --accent: 187 50% 65%;      /* #7AC6D2 */
+    --success: 157 94% 85%;
+    /* #B5FCCD */
+    /* --card: 142 12% 43%;       /* #697565 */
+    --header: 203 66% 54%;
+    /* #3D90D7 */
 
-    --background: 40 6% 94%;    /* #F1EFEC */
+    /* --background: 3 53% 81% ; */
+    --background: 0 0% 81%;
+    /* #F1EFEC */
     --foreground: 222.2 84% 4.9%;
     --card-foreground: 0 0% 100%;
     --popover: 0 0% 100%;
@@ -23,21 +30,21 @@
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 228 47% 52%;
+    --border: 1 26% 72%;
+    --input: 1 26% 72%;
+    --ring: 1 26% 72%;
   }
 
   .dark {
 
-/* Center navigation */
-.no-scrollbar {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  margin: 0 auto;
-  max-width: fit-content;
-  padding: 0 1rem;
-}
+    /* Center navigation */
+    .no-scrollbar {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      margin: 0 auto;
+      max-width: fit-content;
+      padding: 0 1rem;
+    }
 
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -55,9 +62,9 @@
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 228 47% 52%;
+    --border: 1 26% 72%;
+    --input: 1 26% 72%;
+    --ring: 1 26% 72%;
   }
 
   * {
@@ -72,9 +79,16 @@
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
+
     .no-scrollbar {
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
+  }
+}
+
+@media (max-width: 680px) {
+  .global-news-hub-text {
+    margin-left: 25px !important;
   }
 }

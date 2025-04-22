@@ -19,7 +19,7 @@ import {
 
 // Countries organized by geographical regions
 const REGIONS = {
-  "Global": [
+  Global: [
     { code: "GLOBAL", name: "Global News" },
     { code: "GLOBAL-TRENDING", name: "Trending News" },
   ],
@@ -35,7 +35,7 @@ const REGIONS = {
     { code: "CO", name: "Colombia" },
     { code: "VE", name: "Venezuela" },
   ],
-  "Europe": [
+  Europe: [
     { code: "GB", name: "United Kingdom" },
     { code: "FR", name: "France" },
     { code: "DE", name: "Germany" },
@@ -62,7 +62,7 @@ const REGIONS = {
     { code: "SK", name: "Slovakia" },
     { code: "UA", name: "Ukraine" },
   ],
-  "Asia": [
+  Asia: [
     { code: "CN", name: "China" },
     { code: "JP", name: "Japan" },
     { code: "IN", name: "India" },
@@ -86,7 +86,7 @@ const REGIONS = {
     { code: "TR", name: "Turkey" },
     { code: "ZA", name: "South Africa" },
   ],
-  "Oceania": [
+  Oceania: [
     { code: "AU", name: "Australia" },
     { code: "NZ", name: "New Zealand" },
   ],
@@ -98,11 +98,11 @@ function getFlagEmoji(countryCode: string) {
   if (countryCode === "GLOBAL") {
     return "🌎"; // Globe emoji for global news
   }
-  
+
   if (countryCode === "GLOBAL-TRENDING") {
     return "🔥"; // Fire emoji for trending news
   }
-  
+
   // Handle country-specific trending flags
   if (countryCode && countryCode.endsWith("-TRENDING")) {
     const baseCountry = countryCode.replace("-TRENDING", "");
@@ -112,7 +112,7 @@ function getFlagEmoji(countryCode: string) {
       .map((char) => 127397 + char.charCodeAt(0));
     return String.fromCodePoint(...codePoints) + "🔥"; // Country flag + fire emoji
   }
-  
+
   // For standard country codes, convert to flag emoji
   const codePoints = countryCode
     .toUpperCase()
@@ -135,78 +135,89 @@ export function CountryFilter({ value, onChange }: CountryFilterProps) {
     .find((country) => country.code === value);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-[240px] justify-between"
-        >
-          {value ? (
-            <span className="flex items-center gap-2">
-              <span>{getFlagEmoji(value)}</span>
-              <span>{selectedCountry?.name}</span>
-            </span>
-          ) : (
-            "Select country..."
-          )}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0">
-        <Command>
-          <CommandInput placeholder="Search country..." />
-          <CommandList className="max-h-[300px] overflow-auto">
-            <CommandEmpty>No country found.</CommandEmpty>
-            <CommandGroup>
-              <CommandItem
-                value="all"
-                onSelect={() => {
-                  onChange(undefined);
-                  setOpen(false);
-                }}
-              >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    !value ? "opacity-100" : "opacity-0"
-                  )}
-                />
-                All Countries
-              </CommandItem>
-            </CommandGroup>
-            {Object.entries(REGIONS).map(([region, countries]) => (
-              <CommandGroup key={region} heading={region}>
-                <div className="grid grid-cols-1">
-                  {countries.map((country) => (
-                    <CommandItem
-                      key={country.code}
-                      value={country.name}
-                      onSelect={() => {
-                        onChange(country.code);
-                        setOpen(false);
-                      }}
-                      className="flex items-center"
-                    >
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          value === country.code ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                      <span className="flex items-center gap-2">
-                        <span className="w-6 inline-block text-center">{getFlagEmoji(country.code)}</span>
-                        <span>{country.name}</span>
-                      </span>
-                    </CommandItem>
-                  ))}
-                </div>
-              </CommandGroup>
-            ))}
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
+      {/* Country Select */}
+      <div className="w-full sm:w-[240px]">
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={open}
+              className="w-full justify-between"
+            >
+              {value ? (
+                <span className="flex items-center gap-2 ">
+                  <span>{getFlagEmoji(value)}</span>
+                  <span>{selectedCountry?.name}</span>
+                </span>
+              ) : (
+                "Select country..."
+              )}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[300px] p-0">
+            <Command>
+              <CommandInput placeholder="Search country..." />
+              <CommandList className="max-h-[300px] overflow-auto">
+                <CommandEmpty>No country found.</CommandEmpty>
+                <CommandGroup>
+                  <CommandItem
+                    value="all"
+                    onSelect={() => {
+                      onChange(undefined);
+                      setOpen(false);
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        !value ? "opacity-100" : "opacity-0",
+                      )}
+                    />
+                    All Countries
+                  </CommandItem>
+                </CommandGroup>
+                {Object.entries(REGIONS).map(([region, countries]) => (
+                  <CommandGroup key={region} heading={region}>
+                    <div className="grid grid-cols-1">
+                      {countries.map((country) => (
+                        <CommandItem
+                          key={country.code}
+                          value={country.name}
+                          onSelect={() => {
+                            onChange(country.code);
+                            setOpen(false);
+                          }}
+                          className="flex items-center"
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              value === country.code
+                                ? "opacity-100"
+                                : "opacity-0",
+                            )}
+                          />
+                          <span className="flex items-center gap-2">
+                            <span className="w-6 inline-block text-center">
+                              {getFlagEmoji(country.code)}
+                            </span>
+                            <span>{country.name}</span>
+                          </span>
+                        </CommandItem>
+                      ))}
+                    </div>
+                  </CommandGroup>
+                ))}
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
+      </div>
+
+    
+    </div>
   );
 }
