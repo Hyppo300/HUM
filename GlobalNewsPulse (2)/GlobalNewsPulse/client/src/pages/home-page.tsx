@@ -1204,7 +1204,7 @@ export default function HomePage() {
         </div>
       </nav>
       {/* Main Content */}
-      <main className="container mx-auto px-2 sm:px-4 py-8 bg-cover bg-center bg-no-repeat backdrop-blur-lg">
+      <main className="container mx-auto sm:px-4 py-8 bg-cover bg-center bg-no-repeat backdrop-blur-lg">
         {/* Search & Filters Section */}
         {/* Filter Row Centered */}
         {/* Search Bar Row */}
@@ -1213,7 +1213,7 @@ export default function HomePage() {
           {/* Search Bar + Search Button (Always in One Line) */}
           <form
             onSubmit={handleSearch}
-            className="flex flex-row gap-2 flex-1 min-w-0"
+            className="flex flex-row gap-2 flex-1 min-w-0 px-2"
           >
             <Input
               type="text"

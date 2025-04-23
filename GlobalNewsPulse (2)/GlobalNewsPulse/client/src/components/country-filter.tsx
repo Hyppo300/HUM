@@ -135,9 +135,9 @@ export function CountryFilter({ value, onChange }: CountryFilterProps) {
     .find((country) => country.code === value);
 
   return (
-    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-[120px] sm:w-auto">
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4  sm:w-auto">
       {/* Country Select */}
-      <div className="w-full sm:w-[100px]">
+      <div className="w-full ">
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button
