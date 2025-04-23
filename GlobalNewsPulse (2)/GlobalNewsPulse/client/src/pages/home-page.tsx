@@ -1204,7 +1204,7 @@ export default function HomePage() {
         </div>
       </nav>
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 bg-cover bg-center bg-no-repeat backdrop-blur-lg">
+      <main className="container mx-auto px-2 sm:px-4 py-8 bg-cover bg-center bg-no-repeat backdrop-blur-lg">
         {/* Search & Filters Section */}
         {/* Filter Row Centered */}
         {/* Search Bar Row */}
