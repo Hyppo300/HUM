@@ -1336,6 +1336,7 @@ export default function HomePage() {
                 setActiveFilter("all");
                 setSelectedPreset("");
                 setDateRange([null, null]);
+                setSelectedCountry(undefined);
               }}
               className="text-xs"
             >
