@@ -282,6 +282,79 @@ export default function HomePage() {
         filtered = baseArticles;
     }
 
+    // Apply date filtering
+    let fromDate: string | undefined;
+    let toDate: string | undefined;
+
+    // Handle date range based on preset selection
+    if (selectedPreset === "Custom" && startDate && endDate) {
+      fromDate = startDate.toISOString().split("T")[0];
+      toDate = endDate.toISOString().split("T")[0];
+    } else if (selectedPreset) {
+      const now = new Date();
+      switch (selectedPreset) {
+        case "Yesterday":
+          const yesterday = new Date(now);
+          yesterday.setDate(yesterday.getDate() - 1);
+          fromDate = yesterday.toISOString().split("T")[0];
+          toDate = yesterday.toISOString().split("T")[0];
+          break;
+        case "Last 7 Days":
+          const lastWeek = new Date(now);
+          lastWeek.setDate(lastWeek.getDate() - 7);
+          fromDate = lastWeek.toISOString().split("T")[0];
+          toDate = now.toISOString().split("T")[0];
+          break;
+        case "Last 30 Days":
+          const lastMonth = new Date(now);
+          lastMonth.setDate(lastMonth.getDate() - 30);
+          fromDate = lastMonth.toISOString().split("T")[0];
+          toDate = now.toISOString().split("T")[0];
+          break;
+        case "This Month":
+          const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+          fromDate = firstDay.toISOString().split("T")[0];
+          toDate = now.toISOString().split("T")[0];
+          break;
+        case "Last Month":
+          const firstDayLastMonth = new Date(
+            now.getFullYear(),
+            now.getMonth() - 1,
+            1,
+          );
+          const lastDayLastMonth = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            0,
+          );
+          fromDate = firstDayLastMonth.toISOString().split("T")[0];
+          toDate = lastDayLastMonth.toISOString().split("T")[0];
+          break;
+      }
+    }
+
+    if (fromDate || toDate) {
+      filtered = filtered.filter((article) => {
+        const articleDate = new Date(article.createdAt);
+        articleDate.setHours(0, 0, 0, 0); // Reset time part for date comparison
+
+        if (fromDate) {
+          const fromDateObj = new Date(fromDate);
+          fromDateObj.setHours(0, 0, 0, 0);
+          if (articleDate < fromDateObj) return false;
+        }
+
+        if (toDate) {
+          const toDateObj = new Date(toDate);
+          toDateObj.setHours(0, 0, 0, 0);
+          if (articleDate > toDateObj) return false;
+        }
+
+        return true;
+      });
+    }
+
+
     setFilteredArticles(filtered);
   }, [
     activeFilter,
@@ -290,6 +363,9 @@ export default function HomePage() {
     newsroomArticles,
     searchQuery,
     selectedCountry,
+    selectedPreset,
+    startDate,
+    endDate,
   ]);
 
   // Fetch news by country mutation
