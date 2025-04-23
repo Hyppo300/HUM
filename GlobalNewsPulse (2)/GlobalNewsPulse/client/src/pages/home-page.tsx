@@ -1009,34 +1009,35 @@ export default function HomePage() {
     }
 
     // Fetch news with date range
-    if (selectedCountry) {
-      fetchNewsMutation.mutate({
-        country: selectedCountry,
-        from: fromDate,
-        to: toDate,
-      });
+    const params: any = {
+      from: fromDate,
+      to: toDate
+    };
 
+    if (selectedCountry) {
+      params.country = selectedCountry;
+      setActiveFilter("country");
       toast({
         title: `Fetching ${selectedCountry.toUpperCase()} News`,
         description: `Getting the latest articles from ${selectedCountry.toUpperCase()}${selectedPreset ? ` for ${selectedPreset}` : ""}...`,
       });
-
-      setActiveFilter("country");
-    } else {
-      fetchNewsMutation.mutate({
-        trending: true,
-        query: "breaking news",
-        from: fromDate,
-        to: toDate,
+    } else if (selectedPreset) {
+      setActiveFilter("date");
+      toast({
+        title: "Fetching News",
+        description: `Getting articles ${selectedPreset}...`,
       });
-
+    } else {
+      params.trending = true;
+      params.query = "breaking news";
+      setActiveFilter("hot");
       toast({
         title: "Fetching Global News",
-        description: `Getting the latest headlines from around the world${selectedPreset ? ` for ${selectedPreset}` : ""}...`,
+        description: "Getting the latest headlines from around the world...",
       });
-
-      setActiveFilter("hot");
     }
+
+    fetchNewsMutation.mutate(params);
   };
 
   return (
@@ -1329,6 +1330,8 @@ export default function HomePage() {
                   `Search results for: "${searchQuery}" ${selectedPreset ? `(${selectedPreset})` : ""}`}
                 {activeFilter === "country" &&
                   `Showing news from ${selectedCountry?.toUpperCase()} ${selectedPreset ? `(${selectedPreset})` : ""}`}
+              {activeFilter === "date" &&
+                  `Showing news from ${selectedPreset}`}
               </span>
             </div>
             <Button
