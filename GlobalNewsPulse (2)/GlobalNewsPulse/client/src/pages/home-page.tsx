@@ -1041,7 +1041,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="bg-[url(https://static.vecteezy.com/system/resources/thumbnails/035/328/612/small/red-silk-fabric-texture-used-as-background-red-panne-fabric-background-of-soft-and-smooth-textile-material-crushed-velvet-luxury-scarlet-for-velvet-photo.jpg)] h-full w-full bg-cover bg-center bg-no-repeat">
+    <div className="bg-[url(https://static.vecteezy.com/system/resources/thumbnails/035/328/612/small/red-silk-fabric-texture-used-as-background-red-panne-fabric-background-of-soft-and-smooth-textile-material-crushed-velvet-luxury-scarlet-for-velvet-photo.jpg)] min-h-screen w-full bg-cover bg-center bg-no-repeat">
       <header className="bg-[url('https://i.pinimg.com/736x/60/28/bb/6028bbed600e4948ad054c391eac6cf6.jpg')] bg-cover bg-center bg-no-repeat bg-black border-b sticky top-0 z-20">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center mb-4">
