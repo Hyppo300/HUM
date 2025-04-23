@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { CATEGORIES } from '@shared/schema';
+// import { CATEGORIES } from '@shared/schema';
 import { Article } from "@shared/schema";
 import { NewsFeed } from "@/components/news-feed";
 import { CountryFilter } from "@/components/country-filter";
@@ -34,6 +34,16 @@ export default function HomePage() {
     "This Month",
     "Last Month",
     "Custom",
+  ];
+  // Categories to fetch news for
+  const CATEGORIES = [
+    "business",
+    "entertainment",
+    "general",
+    "health",
+    "science",
+    "sports",
+    "technology",
   ];
   const [selectedPreset, setSelectedPreset] = useState("");
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
@@ -1012,7 +1022,7 @@ export default function HomePage() {
     // Fetch news with date range
     const params: any = {
       from: fromDate,
-      to: toDate
+      to: toDate,
     };
 
     if (selectedCountry) {
@@ -1052,7 +1062,7 @@ export default function HomePage() {
                 {menuOpen ? (
                   <X className="text-white h-6 w-6" />
                 ) : (
-                  <Menu className="text-white h-6 w-6" />
+                  <Menu className="text-white h-10 w-6" />
                 )}
               </button>
             </div>
@@ -1112,11 +1122,17 @@ export default function HomePage() {
         </div>
 
         {/* Menu Items */}
-        <div
-          className="flex flex-col gap-4 mt-8"
-          style={{ marginLeft: "15px" }}
-        >
-          <a
+        <div className="flex flex-col gap-4 mt-8">
+          {CATEGORIES.map((category) => (
+            <a
+              key={category}
+              href={`#${category.toLowerCase()}`}
+              className="text-white text-lg font-bold hover:text-red-700"
+            >
+              {category.charAt(0).toUpperCase() + category.slice(1)}
+            </a>
+          ))}
+          {/* <a
             href="#general"
             className="text-white text-lg font-bold hover:text-red-700"
           >
@@ -1163,7 +1179,7 @@ export default function HomePage() {
             className="text-white text-lg font-bold hover:text-red-700"
           >
             Science
-          </a>
+          </a> */}
           <div className="sm:block">
             <UserMenuSection />
           </div>
@@ -1178,7 +1194,8 @@ export default function HomePage() {
               <a
                 key={category}
                 href={`#${category.toLowerCase()}`}
-                className="text-sm font-bold hover:text-white whitespace-nowrap"
+                className="text-lg font-bold hover:text-white whitespace-nowrap"
+                style={{ marginLeft: "20px" }}
               >
                 {category.charAt(0).toUpperCase() + category.slice(1)}
               </a>
@@ -1292,7 +1309,7 @@ export default function HomePage() {
                   `Search results for: "${searchQuery}" ${selectedPreset ? `(${selectedPreset})` : ""}`}
                 {activeFilter === "country" &&
                   `Showing news from ${selectedCountry?.toUpperCase()} ${selectedPreset ? `(${selectedPreset})` : ""}`}
-              {activeFilter === "date" &&
+                {activeFilter === "date" &&
                   `Showing news from ${selectedPreset}`}
               </span>
             </div>
