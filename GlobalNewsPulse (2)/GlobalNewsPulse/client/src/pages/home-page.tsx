@@ -354,7 +354,6 @@ export default function HomePage() {
       });
     }
 
-
     setFilteredArticles(filtered);
   }, [
     activeFilter,
@@ -1111,7 +1110,10 @@ export default function HomePage() {
         </div>
 
         {/* Menu Items */}
-        <div className="flex flex-col gap-4 mt-8">
+        <div
+          className="flex flex-col gap-4 mt-8"
+          style={{ marginLeft: "15px" }}
+        >
           <a
             href="#general"
             className="text-white text-lg font-bold hover:text-red-700"
@@ -1370,11 +1372,11 @@ export default function HomePage() {
               {selectedPreset
                 ? "No articles found within this date range."
                 : activeFilter === "all"
-                ? "No articles found. Try selecting a different country or searching for a topic."
-                : "No articles found matching your current filter. Try another filter or search term."}
+                  ? "No articles found. Try selecting a different country or searching for a topic."
+                  : "No articles found matching your current filter. Try another filter or search term."}
             </p>
             <div className="flex flex-col sm:flex-row gap-2 justify-center">
-              <Button 
+              <Button
                 onClick={() => {
                   setActiveFilter("all");
                   setSelectedPreset("");
