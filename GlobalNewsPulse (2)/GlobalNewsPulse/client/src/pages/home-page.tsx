@@ -1251,9 +1251,9 @@ export default function HomePage() {
             </Button>
 
             {/* Date Filter Dropdown */}
-            <div className="w-32 sm:w-auto max-w-xs">
+            <div className="w-28 sm:w-32 md:w-auto max-w-xs">
               <select
-                className="w-full px-2 sm:px-4 py-2 border rounded bg-[#dcdce7] text-red-800 shadow-sm border-input text-sm"
+                className="w-full px-1 sm:px-2 md:px-4 py-2 border rounded bg-[#dcdce7] text-red-800 shadow-sm border-input text-sm"
                 value={selectedPreset}
                 onChange={(e) => setSelectedPreset(e.target.value)}
               >
