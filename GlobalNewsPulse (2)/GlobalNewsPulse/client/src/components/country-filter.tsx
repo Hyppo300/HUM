@@ -135,7 +135,7 @@ export function CountryFilter({ value, onChange }: CountryFilterProps) {
     .find((country) => country.code === value);
 
   return (
-    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-[120px] lg:w-[200px]">
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 ">
       {/* Country Select */}
       <div className="w-full">
         <Popover open={open} onOpenChange={setOpen}>
