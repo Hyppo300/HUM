@@ -441,10 +441,16 @@ export class DatabaseStorage implements IStorage {
 
       // Add date range filtering
       if (fromDate) {
-        articlesQuery = articlesQuery.where(sql`${articles.createdAt} >= ${fromDate}`);
+        // Set fromDate to start of day (00:00:00)
+        const fromDateTime = new Date(fromDate);
+        fromDateTime.setHours(0, 0, 0, 0);
+        articlesQuery = articlesQuery.where(sql`DATE(${articles.createdAt}) >= DATE(${fromDateTime.toISOString()})`);
       }
       if (toDate) {
-        articlesQuery = articlesQuery.where(sql`${articles.createdAt} <= ${toDate}`);
+        // Set toDate to end of day (23:59:59)
+        const toDateTime = new Date(toDate);
+        toDateTime.setHours(23, 59, 59, 999);
+        articlesQuery = articlesQuery.where(sql`DATE(${articles.createdAt}) <= DATE(${toDateTime.toISOString()})`);
       }
 
 
@@ -519,10 +525,16 @@ export class DatabaseStorage implements IStorage {
           }
         }
         if (fromDate) {
-          countQuery.where(sql`${articles.createdAt} >= ${fromDate}`);
+          // Set fromDate to start of day (00:00:00)
+          const fromDateTime = new Date(fromDate);
+          fromDateTime.setHours(0, 0, 0, 0);
+          countQuery.where(sql`DATE(${articles.createdAt}) >= DATE(${fromDateTime.toISOString()})`);
         }
         if (toDate) {
-          countQuery.where(sql`${articles.createdAt} <= ${toDate}`);
+          // Set toDate to end of day (23:59:59)
+          const toDateTime = new Date(toDate);
+          toDateTime.setHours(23, 59, 59, 999);
+          countQuery.where(sql`DATE(${articles.createdAt}) <= DATE(${toDateTime.toISOString()})`);
         }
 
         const totalCountPromise = Promise.race([
