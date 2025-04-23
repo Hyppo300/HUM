@@ -1110,9 +1110,9 @@ export default function HomePage() {
 
       {/* NAVIGATION */}
       <nav
-        className={`lg:hidden fixed top-16 left-0 w-64 h-full bg-[#B3B3B4] p-4 transition-all ease-in-out duration-300 transform ${
+        className={`lg:hidden fixed top-[72px] left-0 w-64 h-[calc(100%-72px)] bg-[#B3B3B4] p-4 transition-all ease-in-out duration-300 transform ${
           menuOpen ? "translate-x-0" : "-translate-x-full"
-        } z-20`}
+        } z-10`}
       >
         {/* Close Button for Mobile Menu */}
         <div className="flex justify-end">
