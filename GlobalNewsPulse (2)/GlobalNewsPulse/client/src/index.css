@@ -89,6 +89,8 @@
 
 @media (max-width: 680px) {
   .global-news-hub-text {
-    margin-left: 25px !important;
+    margin-left: 30px !important;
+
+    ;
   }
 }

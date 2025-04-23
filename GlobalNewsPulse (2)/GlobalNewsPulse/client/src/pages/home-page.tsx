@@ -1070,7 +1070,7 @@ export default function HomePage() {
             {/* "Global News Hub" - Always in the center on all screens */}
             <Link
               href={`/`}
-              className=" global-news-hub-text inline-flex items-center font-bold text-white text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-3xl"
+              className="global-news-hub-text inline-flex items-center font-bold text-white sm:text-lg md:text-xl lg:text-2xl xl:text-3xl"
             >
               Global News Hub
             </Link>
