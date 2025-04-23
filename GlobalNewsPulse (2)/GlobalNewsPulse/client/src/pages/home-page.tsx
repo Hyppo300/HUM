@@ -1366,17 +1366,27 @@ export default function HomePage() {
           (activeFilter !== "all" && filteredArticles.length === 0)) && (
           <div className="text-center py-12 border rounded-lg bg-muted/30 mt-4">
             <p className="text-muted-foreground mb-4">
-              {activeFilter === "all"
+              {selectedPreset
+                ? "No articles found within this date range."
+                : activeFilter === "all"
                 ? "No articles found. Try selecting a different country or searching for a topic."
                 : "No articles found matching your current filter. Try another filter or search term."}
             </p>
             <div className="flex flex-col sm:flex-row gap-2 justify-center">
-              <Button onClick={() => setActiveFilter("all")}>
+              <Button 
+                onClick={() => {
+                  setActiveFilter("all");
+                  setSelectedPreset("");
+                  setDateRange([null, null]);
+                }}
+              >
                 Clear Filter
               </Button>
-              <Button variant="outline" onClick={handleFetchNews}>
-                Fetch More News
-              </Button>
+              {!selectedPreset && (
+                <Button variant="outline" onClick={handleFetchNews}>
+                  Fetch More News
+                </Button>
+              )}
             </div>
           </div>
         )}
