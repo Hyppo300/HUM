@@ -137,7 +137,7 @@ export function CountryFilter({ value, onChange }: CountryFilterProps) {
   return (
     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
       {/* Country Select */}
-      <div className="w-full sm:w-[240px]">
+      <div className="w-full sm:w-[100px]">
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -216,8 +216,6 @@ export function CountryFilter({ value, onChange }: CountryFilterProps) {
           </PopoverContent>
         </Popover>
       </div>
-
-    
     </div>
   );
 }
