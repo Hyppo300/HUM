@@ -1,4 +1,5 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { CATEGORIES } from '@shared/schema';
 import { Article } from "@shared/schema";
 import { NewsFeed } from "@/components/news-feed";
 import { CountryFilter } from "@/components/country-filter";
@@ -1173,54 +1174,15 @@ export default function HomePage() {
       <nav className="sticky top-20 z-10 bg-[#B3B3B4] border-b hidden lg:block">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center overflow-x-auto no-scrollbar py-2 gap-6 font-opensans">
-            <a
-              href="#general"
-              className="text-sm font-bold hover:text-white whitespace-nowrap"
-            >
-              General
-            </a>
-            <a
-              href="#politics"
-              className="text-sm font-bold hover:text-white whitespace-nowrap"
-            >
-              Politics
-            </a>
-            <a
-              href="#business"
-              className="text-sm font-bold hover:text-white whitespace-nowrap"
-            >
-              Business
-            </a>
-            <a
-              href="#health"
-              className="text-sm font-bold hover:text-white whitespace-nowrap"
-            >
-              Health
-            </a>
-            <a
-              href="#entertainment"
-              className="text-sm font-bold hover:text-white whitespace-nowrap"
-            >
-              Entertainment
-            </a>
-            <a
-              href="#tech"
-              className="text-sm font-bold hover:text-white whitespace-nowrap"
-            >
-              Tech
-            </a>
-            <a
-              href="#sports"
-              className="text-sm font-bold hover:text-white whitespace-nowrap"
-            >
-              Sports
-            </a>
-            <a
-              href="#science"
-              className="text-sm font-bold hover:text-white whitespace-nowrap"
-            >
-              Science
-            </a>
+            {CATEGORIES.map((category) => (
+              <a
+                key={category}
+                href={`#${category.toLowerCase()}`}
+                className="text-sm font-bold hover:text-white whitespace-nowrap"
+              >
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </a>
+            ))}
           </div>
         </div>
       </nav>
