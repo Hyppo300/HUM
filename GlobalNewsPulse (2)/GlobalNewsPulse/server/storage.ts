@@ -14,7 +14,7 @@ import { users, articles, comments } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 import { db } from "./db";
-import { eq, and, desc, like, asc, or, count } from "drizzle-orm";
+import { eq, and, desc, like, asc, or, count, sql } from "drizzle-orm";
 import connect from "connect-pg-simple";
 import { log } from "./vite";
 import crypto from "crypto";
@@ -46,6 +46,8 @@ export interface IStorage {
     country?: string;
     page?: number;
     pageSize?: number;
+    fromDate?: string;
+    toDate?: string;
   }): Promise<{ articles: Article[]; totalCount: number }>;
   getArticleById(id: number): Promise<Article | undefined>;
   getArticleByUrl(url: string): Promise<Article | undefined>;
@@ -399,6 +401,8 @@ export class DatabaseStorage implements IStorage {
       country?: string;
       page?: number;
       pageSize?: number;
+      fromDate?: string;
+      toDate?: string;
     } = {},
   ): Promise<{
     articles: Article[];
@@ -408,7 +412,7 @@ export class DatabaseStorage implements IStorage {
     pageSize?: number;
   }> {
     try {
-      const { country, page = 1, pageSize = 30 } = options;
+      const { country, page = 1, pageSize = 30, fromDate, toDate } = options;
       const offset = (page - 1) * pageSize;
 
       // Build and execute query in one go to avoid type issues
@@ -434,6 +438,15 @@ export class DatabaseStorage implements IStorage {
           articlesQuery = articlesQuery.where(eq(articles.country, country));
         }
       }
+
+      // Add date range filtering
+      if (fromDate) {
+        articlesQuery = articlesQuery.where(sql`${articles.createdAt} >= ${fromDate}`);
+      }
+      if (toDate) {
+        articlesQuery = articlesQuery.where(sql`${articles.createdAt} <= ${toDate}`);
+      }
+
 
       // Quick check: Are there any matching articles at all?
       const quickCountPromise = Promise.race([
@@ -504,6 +517,12 @@ export class DatabaseStorage implements IStorage {
           } else {
             countQuery.where(eq(articles.country, country));
           }
+        }
+        if (fromDate) {
+          countQuery.where(sql`${articles.createdAt} >= ${fromDate}`);
+        }
+        if (toDate) {
+          countQuery.where(sql`${articles.createdAt} <= ${toDate}`);
         }
 
         const totalCountPromise = Promise.race([
@@ -999,7 +1018,7 @@ export class MemStorage implements IStorage {
     return true;
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
+  asynccreateUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentUserId++;
     const now = new Date();
 
@@ -1045,8 +1064,10 @@ export class MemStorage implements IStorage {
     country?: string;
     page?: number;
     pageSize?: number;
+    fromDate?: string;
+    toDate?: string;
   }): Promise<{ articles: Article[]; totalCount: number }> {
-    const { country, page = 1, pageSize = 30 } = options || {};
+    const { country, page = 1, pageSize = 30, fromDate, toDate } = options || {};
     const offset = (page - 1) * pageSize;
 
     // Get all articles and apply filtering if needed
@@ -1069,6 +1090,20 @@ export class MemStorage implements IStorage {
           (article) => article.country?.toUpperCase() === country.toUpperCase(),
         );
       }
+    }
+
+    // Apply date filtering
+    if (fromDate) {
+      const fromDateObj = new Date(fromDate);
+      filteredArticles = filteredArticles.filter(
+        (article) => article.createdAt >= fromDateObj,
+      );
+    }
+    if (toDate) {
+      const toDateObj = new Date(toDate);
+      filteredArticles = filteredArticles.filter(
+        (article) => article.createdAt <= toDateObj,
+      );
     }
 
     // Sort by created date (newest first)

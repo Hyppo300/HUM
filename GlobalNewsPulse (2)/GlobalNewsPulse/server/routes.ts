@@ -199,6 +199,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const country = req.query.country as string | undefined;
       const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
       const pageSize = req.query.pageSize ? parseInt(req.query.pageSize as string, 10) : 30;
+      const fromDate = req.query.from as string | undefined;
+      const toDate = req.query.to as string | undefined;
       
       // This endpoint should respond very quickly, so we use a timeout to ensure it returns
       // promptly even if there's an issue with the database query
@@ -213,7 +215,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const dbQueryPromise = (async () => {
         try {
           // Get articles from storage with pagination
-          const result = await storage.getArticles({country, page, pageSize});
+          const result = await storage.getArticles({country, page, pageSize, fromDate, toDate});
           return result;
         } catch (error) {
           log(`Error querying articles: ${error}`, "express");
