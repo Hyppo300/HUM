@@ -888,39 +888,47 @@ export default function HomePage() {
 
     // Handle date range based on preset selection
     if (selectedPreset === "Custom" && startDate && endDate) {
-      fromDate = startDate.toISOString().split('T')[0];
-      toDate = endDate.toISOString().split('T')[0];
+      fromDate = startDate.toISOString().split("T")[0];
+      toDate = endDate.toISOString().split("T")[0];
     } else if (selectedPreset) {
       const now = new Date();
       switch (selectedPreset) {
         case "Yesterday":
           const yesterday = new Date(now);
           yesterday.setDate(yesterday.getDate() - 1);
-          fromDate = yesterday.toISOString().split('T')[0];
-          toDate = yesterday.toISOString().split('T')[0];
+          fromDate = yesterday.toISOString().split("T")[0];
+          toDate = yesterday.toISOString().split("T")[0];
           break;
         case "Last 7 Days":
           const lastWeek = new Date(now);
           lastWeek.setDate(lastWeek.getDate() - 7);
-          fromDate = lastWeek.toISOString().split('T')[0];
-          toDate = now.toISOString().split('T')[0];
+          fromDate = lastWeek.toISOString().split("T")[0];
+          toDate = now.toISOString().split("T")[0];
           break;
         case "Last 30 Days":
           const lastMonth = new Date(now);
           lastMonth.setDate(lastMonth.getDate() - 30);
-          fromDate = lastMonth.toISOString().split('T')[0];
-          toDate = now.toISOString().split('T')[0];
+          fromDate = lastMonth.toISOString().split("T")[0];
+          toDate = now.toISOString().split("T")[0];
           break;
         case "This Month":
           const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-          fromDate = firstDay.toISOString().split('T')[0];
-          toDate = now.toISOString().split('T')[0];
+          fromDate = firstDay.toISOString().split("T")[0];
+          toDate = now.toISOString().split("T")[0];
           break;
         case "Last Month":
-          const firstDayLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-          const lastDayLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-          fromDate = firstDayLastMonth.toISOString().split('T')[0];
-          toDate = lastDayLastMonth.toISOString().split('T')[0];
+          const firstDayLastMonth = new Date(
+            now.getFullYear(),
+            now.getMonth() - 1,
+            1,
+          );
+          const lastDayLastMonth = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            0,
+          );
+          fromDate = firstDayLastMonth.toISOString().split("T")[0];
+          toDate = lastDayLastMonth.toISOString().split("T")[0];
           break;
       }
     }
@@ -935,7 +943,7 @@ export default function HomePage() {
 
       toast({
         title: `Fetching ${selectedCountry.toUpperCase()} News`,
-        description: `Getting the latest articles from ${selectedCountry.toUpperCase()}${selectedPreset ? ` for ${selectedPreset}` : ''}...`,
+        description: `Getting the latest articles from ${selectedCountry.toUpperCase()}${selectedPreset ? ` for ${selectedPreset}` : ""}...`,
       });
 
       setActiveFilter("country");
@@ -949,7 +957,7 @@ export default function HomePage() {
 
       toast({
         title: "Fetching Global News",
-        description: `Getting the latest headlines from around the world${selectedPreset ? ` for ${selectedPreset}` : ''}...`,
+        description: `Getting the latest headlines from around the world${selectedPreset ? ` for ${selectedPreset}` : ""}...`,
       });
 
       setActiveFilter("hot");
@@ -1177,7 +1185,9 @@ export default function HomePage() {
               variant="default"
               onClick={handleFetchTrendingNews}
               disabled={fetchNewsMutation.isPending}
-              className="text-sm px-4 py-2 bg-gray-200 text-red-800 hover:bg-gray-300 whitespace-nowrap"
+              className={`text-sm px-4 py-2 bg-gray-200 text-red-800 hover:bg-gray-300 whitespace-nowrap  duration-5 ${
+                selectedPreset === "Custom" ? "-mt-[45px]" : ""
+              }`}
             >
               🔥 Hot Topics
             </Button>
